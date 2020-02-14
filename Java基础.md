@@ -184,12 +184,132 @@ JDK动态代理基于反射，所以生成效率较快；cglib基于字节码技
 
 CGLIB使用ASM字节码技术生成新的子类，基于继承；
 
-5. final的用途。
-6. 写出三种单例模式实现 。
-7. 如何在父类中为子类自动完成所有的hashcode和equals实现？这么做有何优劣。
-8. 请结合OO设计理念，谈谈访问修饰符public、private、protected、default在应用设
-   计中的作用。
-9. 深拷贝和浅拷贝区别。
+17. **final的用途。**
+
+final修饰的类不能够被继承，final修饰的方法不能被重写，final修饰的变量引用不可变；
+
+18. **写出三种单例模式实现 。**
+
+单线程下使用，懒加载：
+
+```
+
+/**
+ * @date 2019/12/23 21:29
+ * 
+ * 线程不安全，懒加载
+ */
+public class LazySingleton {
+    private static LazySingleton instance;
+
+    private LazySingleton(){
+    }
+
+    public static LazySingleton getInstance(){
+        if(instance==null){
+            instance=new LazySingleton();
+        }
+        return instance;
+    }
+}
+
+```
+
+二、静态内部类形式：懒加载，线程安全
+
+```
+/**
+ * @date 2019/12/23 21:37
+ * 静态内部类模式，线程安全，懒加载（推荐）
+ */
+public class InnerClassSingleton {
+
+    private InnerClassSingleton() {
+    }
+
+    public static InnerClassSingleton getInstance() {
+        return SingletonHolder.INSTANCE;
+    }
+
+    private static class SingletonHolder {
+        private static final InnerClassSingleton INSTANCE = new 	InnerClassSingleton();
+    }
+}
+
+```
+
+三、基于static关键字初始化，线程安全，非懒加载
+
+```
+/**
+ * @date 2019/12/23 21:12
+ * 基于static关键字初始化，线程安全，非懒加载
+ */
+public class Singleton {
+    private static Singleton instance = new Singleton();
+
+    private Singleton() {
+        System.err.println("create a new instance.");
+    }
+
+    public static Singleton getInstance() {
+        return instance;
+    }
+}
+```
+
+四、Double-Check-Locking 双重锁检查模式，线程安全，懒加载
+
+```
+/**
+ * @author Created by neal.zhang
+ * @date 2020/2/14 17:54
+ * 双重锁检查，jdk1.5以上适用，基于synchronized和volatile
+ * 线程安全，懒加载，有人认为anti-pattern
+ */
+public class DoubleCheckSingleton {
+
+    private static volatile DoubleCheckSingleton instance;
+
+    private DoubleCheckSingleton() {
+    }
+
+    public static DoubleCheckSingleton getInstance() {
+        if (instance == null) {
+            synchronized (DoubleCheckSingleton.class) {
+                if (instance == null) {
+                    instance = new DoubleCheckSingleton();
+                }
+            }
+
+        }
+        return instance;
+    }
+}
+```
+
+五、枚举，天然immutable，天然多线程安全；
+
+其他的各种不推荐；
+
+19. **如何在父类中为子类自动完成所有的hashcode和equals实现？这么做有何优劣。**
+
+子类不实现，默认调用父类方法；
+
+缺点是不精确，有需要比较子类的场景则不适用；
+
+20. **请结合OO设计理念，谈谈访问修饰符public、private、protected、default在应用设
+    计中的作用。**
+
+* `public` 所有类都可以访问
+* `protected` 子类可以访问
+* `private` 只有自己可以访问
+* `default` 默认访问模式，同一包下可以访问
+
+21. **深拷贝和浅拷贝区别。**
+
+
+
 10. 数组和链表数据结构描述，各自的时间复杂度。
 11. error和exception的区别，CheckedException，RuntimeException的区别。
 12. 请列出5个运行时异常。
