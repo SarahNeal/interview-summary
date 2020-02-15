@@ -333,10 +333,17 @@ NullPointerException（空指针）,ArrayOutOfBoundsException（数组越界）,
 25. **在自己的代码中，如果创建一个java.lang.String类，这个类是否可以被类加载器加
     载？为什么。**
 
+不能，java.*的类jvm决定了必须由Bootstrap类加载器进行加载，防止用户自定义的类替换java核心api定义的类，避免安全隐患；用户自定义的类加载器是AppClassLoader，由于jvm类加载器采用双亲委派机制进行加载，会先尝试由父加载器（ExtClassLoader）进行加载，以此类推直到Bootstrap类加载器，由于已经加载过api中定义的String，直接返回；
 
+26. **说一说你对java.lang.Object对象中hashCode和equals方法的理解。在什么场景下需
+    要重新实现这两个方法。**
 
-14. 说一说你对java.lang.Object对象中hashCode和equals方法的理解。在什么场景下需
-    要重新实现这两个方法。
+hashCode返回一个整数值，一般用于hash table中进行快速确定对象的存储位置；如果两个不同的对象hashCode相等，就存在了hash冲突；
+
+equals用==来比较，比较的是两个对象的内存地址；
+
+当需要将对象存储到哈希表中，出于业务需求，在比较某些属性相同后就判断为同一个对象，则需要重写hashCode和equals方法；哈希表一般会首先调用对象的hashCode方法判断两个对象的hash值是否相等，之后再判断equals返回结果是否为true；
+
 15. 在jdk1.5中，引入了泛型，泛型的存在是用来解决什么问题。
 16. 这样的a.hashcode() 有什么用，与a.equals(b)有什么关系。
 17. 有没有可能2个不相等的对象有相同的hashcode。
